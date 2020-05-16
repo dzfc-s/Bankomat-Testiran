@@ -29,127 +29,68 @@ class BankomatTest {
 		String actual3 = Bankomat.opcijaTri("3.Ispisati detalje postojeceg racuna");
 		assertEquals("3.Ispisati detalje postojeceg racuna", actual3);
 	}
-
-	@Test
-	void shouldReturnOneWhenOdabirEqualsOne() throws Exception {
-		int actual = Bankomat.odabirOpcije(1);
-		assertEquals(1, actual);
-	}
-	
-	@Test
-	void shouldReturnZeroWhenOdabirIsLessThanOne() throws Exception {
-		int actual = Bankomat.odabirOpcije(-1);
-		assertEquals(0, actual);
-	}
-	
-	@Test
-	void shouldReturnZeroWhenOdabirIsGreaterThan3() throws Exception {
-		int actual = Bankomat.odabirOpcije(4);
-		assertEquals(0, actual);
-	}
 	
 	@Test
 	void shouldReturnFalseWhenRacunIsInIncorrectForm() throws Exception {
-		Racun racunTest = Bankomat.kreiranjeRacuna("selma", -1, -10);
-		Racun racunTest1 = Bankomat.kreiranjeRacuna("selma", 1, -10);
-		boolean test = true;
-		if(racunTest.getBrojRacuna() == -1)
-			test = false;
-		assertFalse(test);
-		
-		if(racunTest.getIznosNaRacunu() == -10)
-			test = false;
-		assertFalse(test);
-		
-		if(racunTest1.getBrojRacuna() == Bankomat.racuni.get(0).getBrojRacuna())
-			test = false;
-		assertFalse(test);
-	}
+		Racun racun = new Racun("selma", 1, 10);
+		Racun racunTest = Bankomat.kreiranjeRacuna("selma", racun.getBrojRacuna(), 10);
+		Racun racunTest2 = Bankomat.kreiranjeRacuna("s", 52, -10);
+		Racun racunTest3 = Bankomat.kreiranjeRacuna("f", -4, 20);
+		assertEquals(null, racunTest);
+		assertEquals(null, racunTest2);
+		assertEquals(null, racunTest3);
+	}	
 	
 	@Test 
 	void shouldReturnTrueWhenRacunIsInCorrectForm() throws Exception {
-		Racun racunTest = Bankomat.kreiranjeRacuna("selma", 1, 100);
+		Racun racunTest = Bankomat.kreiranjeRacuna("selma", 3, 100);
 		boolean test = false;
-		if(racunTest.getBrojRacuna() == 1 && racunTest.getImeVlasnikaRacuna().equals("selma") 
-				&&  racunTest.getIznosNaRacunu() == 100)
+		if(racunTest.getImeVlasnikaRacuna().equals("selma") && racunTest.getBrojRacuna() == 3 && racunTest.getIznosNaRacunu() == 100)
 			test = true;
+		
 		assertTrue(test);
 	}
 	
 	@Test 
-	void shouldReturnStringImeVlasnika()  throws Exception {
-		String actual = Bankomat.imeVlasnikaRacuna("ImeVlasnika");
-		assertEquals("ImeVlasnika", actual);
-	}
-	
-	@Test 
-	void shouldReturnIntBrojRacuna() throws Exception {
-		int actual = Bankomat.brojRacuna(5);
-		assertEquals(5, actual);
-	}
-	
-	@Test 
-	void shouldReturnDoubleIznosNaRacunu() throws Exception {
-		double actual = Bankomat.iznosNaRacunu(10.0);
-		assertEquals(10.0, actual);
-	}
-	
-	@Test 
-	void shouldReturnFalseWhenTransferNovcaIsNotWork() throws Exception {
+	void shouldReturn0WhenTransferNovcaIsNotWork() throws Exception {
+		Racun racun = new Racun("selma", 6, 70);
+		Racun racunT = new Racun("f", 5, 50);
+		int sourceAccount = 2, targetAccount = 3;
+		double iznos = 80;
+		double rezultat = Bankomat.transferNovca(sourceAccount, targetAccount, iznos);
+		if(sourceAccount != racun.getBrojRacuna() || targetAccount != racunT.getBrojRacuna() && iznos > racun.getIznosNaRacunu())
+			rezultat = 0;
 		
+		assertEquals(0, rezultat);
 	}
 	
 	@Test 
-	void shouldReturnTrueWhenTransferNovcaWorks() throws Exception {
+	void shouldReturnAmountWhenTransferNovcaWorks() throws Exception {
+		Racun racunS = new Racun("s", 7, 20);
+		Racun racunT = new Racun("t", 9, 40);
+		int sourceAcc = 7, targetAcc = 9;
+		double iznos = 10;
+		double rezultat = Bankomat.transferNovca(sourceAcc, targetAcc, iznos);
+		if(sourceAcc == racunS.getBrojRacuna() && targetAcc == racunT.getBrojRacuna() && iznos < racunS.getIznosNaRacunu())
+			rezultat = iznos;
 		
-	}
-	
-	@Test
-	void shouldReturnSourceAccountNumber() throws Exception {
-		int actual = Bankomat.sourceAccount(5);
-		assertEquals(5, actual);
-	}
-	
-	@Test
-	void shouldReturnTargetAccountNumber() throws Exception {
-		int actual = Bankomat.targetAccount(4);
-		assertEquals(4, actual);
-	}
-	
-	@Test
-	void shouldReturnAmount() throws Exception {
-		double actual = Bankomat.iznosZaPrebacivanje(10.0);
-		assertEquals(10.0, actual);
-	}
-	
-	@Test 
-	void shouldReturnAmountWhenMoneyIsTransferred() throws Exception {
-		
-	}
-	
-	@Test
-	void shouldReturnZeroWhenMoneyIsNotTransferred() throws Exception {
-		
+		assertEquals(iznos, rezultat);
 	}
 	
 	@Test
 	void shouldReturnEmptyStringWhenAccountDoesNotExist() throws Exception {
+		String actual = Bankomat.detaljiRacuna(5);
+		assertEquals("", actual);
 	
 	}
 	
 	@Test
 	void shouldReturnInformationAboutTheAccountWhenAccountExist() throws Exception {
-		
-		
+		Racun racun = Bankomat.racuni.get(0);
+		String actual = Bankomat.detaljiRacuna(racun.getBrojRacuna());
+		assertEquals(racun.toString(), actual);
 	}
-	
-	@Test
-	void shouldReturnInt() throws Exception {
-		int actual = Bankomat.racunZaIspisDetalja(1);
-		assertEquals(1, actual);
-		
-	}
-	
+
 	@Test
 	void shouldReturnFalseWhenBrojRacunaLessThan0() throws Exception {
 		boolean condition = Provjera.brojRacunaPozitivan(-1);
@@ -212,15 +153,14 @@ class BankomatTest {
 	
 	@Test
 	void shouldReturFalseWhenAmountOfMoneyGreaterThanAmountOnSoruceAccount() throws Exception {
-		double iznos = Bankomat.racuni.get(0).getIznosNaRacunu()+500;
-		boolean condition = Provjera.iznosNaSoruceAccOdgovarajuci(Bankomat.racuni.get(0).getBrojRacuna(), iznos);
+		boolean condition = Provjera.iznosNaSoruceAccOdgovarajuci(Bankomat.racuni.get(0).getBrojRacuna(), 500);
 		assertFalse(condition);
 	}
 	
 	@Test
 	void shouldReturnTrueWhenAmountOfMoneyLessThanAmountOnSourceAcc() throws Exception {
-		double iznos = Bankomat.racuni.get(0).getIznosNaRacunu()-50;
-		boolean condition = Provjera.iznosNaSoruceAccOdgovarajuci(Bankomat.racuni.get(0).getBrojRacuna(), iznos);
+		Racun racun = Bankomat.racuni.get(0);
+		boolean condition = Provjera.iznosNaSoruceAccOdgovarajuci(racun.getBrojRacuna(), 50);
 		assertTrue(condition);
 	}
 	
